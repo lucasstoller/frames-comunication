@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <title>POC iFrames</title>
+</head>
+<body>
+  <h1 class="title">Host Site</h1>
+
+  <iframe src="iframe.html" width="300" height="300">
+    <p>Your browser does not support iframes.</p>
+  </iframe>
+
+  <!----- JS ----->
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+
+  <script>
+    window.addEventListener('message', function(event) {
+      const data = JSON.parse(event.data)
+      const { origin, source } = event
+
+      console.log(data); // event data
+      console.log(origin); // event origin
+      console.log(source); // event source
+
+
+      Swal.fire({
+        title: `A ${data.type} is gonne to be done`,
+        text: `${data.content.email} wants to pass. Let him pass?`,
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        let message
+        if (result.value) {
+          message = {
+            type: 'loginAwnser',
+            content: {
+              permitted: true,
+              message: 'Of course my friend'
+            }
+          }
+        }
+        else {
+          message = {
+            type: 'loginAwnser',
+            content: {
+              permitted: false,
+              message: "'You shall not pass!'"
+            }
+          }
+        }
+
+        source.postMessage(JSON.stringify(message), '*')
+      })
+    });
+  </script>
+</body>
+</html>
